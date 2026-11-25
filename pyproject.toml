@@ -1,0 +1,60 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gitpusher"
+dynamic = ["version"]
+description = "把本地代码一键提交并推送到 GitHub 的 Windows 桌面工具（纯标准库，无运行时依赖）"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "DG704411" }]
+keywords = ["github", "git", "gui", "tkinter", "windows", "backup", "push"]
+classifiers = [
+  "Development Status :: 5 - Production/Stable",
+  "Environment :: Win32 (MS Windows)",
+  "Intended Audience :: End Users/Desktop",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: Microsoft :: Windows",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Software Development :: Version Control :: Git",
+  "Topic :: Utilities",
+]
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/DG704411/gitpusher"
+Issues = "https://github.com/DG704411/gitpusher/issues"
+Changelog = "https://github.com/DG704411/gitpusher/blob/main/CHANGELOG.md"
+
+[project.scripts]
+gitpusher = "gitpusher.cli:main"
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "ruff>=0.6"]
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.dynamic]
+version = { attr = "gitpusher.__version__" }
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+  "network: 需要访问 api.github.com / github.com 的测试",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B"]
+ignore = ["E501"]
