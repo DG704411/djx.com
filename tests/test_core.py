@@ -38,8 +38,11 @@ class SkipTest(Exception):
 
 
 def _skip(reason: str) -> None:
-    if pytest is not None:
-        pytest.skip(reason)
+    """零依赖运行器的跳过信号；pytest 那侧由 @windows_only 这类 mark 提前跳过。
+
+    这里**绝不能**调 pytest.skip()：它抛的 Skipped 继承自 BaseException 而不是
+    Exception，运行器的 except 接不住，整个跑测进程会直接崩掉（CI 上就是这么炸的）。
+    """
     raise SkipTest(reason)
 
 

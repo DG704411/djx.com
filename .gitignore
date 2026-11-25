@@ -19,6 +19,9 @@ config.json
 *.lnk
 *.log
 
+# ---- 本地工具副产物（本项目不使用 uv；若将来采用，可删除这一行）----
+uv.lock
+
 # ---- 系统 ----
 .DS_Store
 Thumbs.db

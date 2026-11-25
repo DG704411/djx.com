@@ -2,6 +2,21 @@
 
 格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，版本号遵循 [语义化版本](https://semver.org/lang/zh-CN/)。
 
+## [1.0.2] - 2026-11-25
+
+### 修复
+
+- **零依赖运行器在 Linux 上整轮崩溃**：`tests/run_tests.py` 遇到「跳过」时直接挂掉，
+  导致 CI 的 `Smoke test` 步骤在 ubuntu 上失败（Windows 恰好不走跳过分支所以没事）。
+  根因是 `_skip()` 调用了 `pytest.skip()`，它抛的 `Skipped` 继承自 `BaseException`
+  而不是 `Exception`，运行器接不住。现在 `_skip()` 只抛自家的 `SkipTest`
+  （pytest 那侧本来就由 `@windows_only` 这类 mark 提前跳过），运行器另外把
+  `Skipped/XFailed/XPassed` 也识别为跳过，作为兜底
+- **Windows runner 上测试全过却判失败**：13 个用例都 PASS，但打印中文汇总时抛
+  `UnicodeEncodeError`（GitHub 的 Windows runner 用 cp1252 解码 stdout，
+  编不出「通过 / 跳过 / 失败」）。现在运行器强制把 stdout/stderr 切到 UTF-8，
+  CI 里另外加了 `PYTHONIOENCODING=utf-8` 和 `python -X utf8` 双保险
+
 ## [1.0.1] - 2026-11-25
 
 ### 修复

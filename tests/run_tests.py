@@ -11,6 +11,12 @@ import time
 import traceback
 from pathlib import Path
 
+# GitHub Actions 的 Windows runner 用 cp1252 解码 stdout，直接 print 中文会抛
+# UnicodeEncodeError，把"测试全过"判成失败。这里强制 UTF-8（errors=replace 兜底）。
+for _stream in (sys.stdout, sys.stderr):
+    if hasattr(_stream, "reconfigure"):
+        _stream.reconfigure(encoding="utf-8", errors="replace")
+
 HERE = Path(__file__).resolve().parent
 if str(HERE) not in sys.path:
     sys.path.insert(0, str(HERE))
@@ -42,11 +48,19 @@ def main() -> int:
         except test_core.SkipTest as exc:
             skipped.append((name, str(exc)))
             print(f"[SKIP] {name:<38} {exc}")
-        except Exception as exc:  # noqa: BLE001
-            failed.append((name, exc))
-            elapsed = time.time() - started
-            print(f"[FAIL] {name:<38} {elapsed:5.2f}s  {type(exc).__name__}: {exc}")
-            traceback.print_exc(limit=2)
+        except BaseException as exc:  # noqa: BLE001
+            # pytest 的 Skipped / XFailed 继承自 BaseException 而不是 Exception，
+            # 单独识别它们，别让一个"跳过"把整轮测试崩掉。
+            if type(exc).__name__ in {"Skipped", "XFailed", "XPassed"}:
+                skipped.append((name, f"{type(exc).__name__}（pytest 标记跳过）"))
+                print(f"[SKIP] {name:<38} {exc}")
+            elif isinstance(exc, KeyboardInterrupt):
+                raise
+            else:
+                failed.append((name, exc))
+                elapsed = time.time() - started
+                print(f"[FAIL] {name:<38} {elapsed:5.2f}s  {type(exc).__name__}: {exc}")
+                traceback.print_exc(limit=2)
         else:
             elapsed = time.time() - started
             passed.append(name)
