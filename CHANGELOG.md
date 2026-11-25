@@ -2,6 +2,17 @@
 
 格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，版本号遵循 [语义化版本](https://semver.org/lang/zh-CN/)。
 
+## [1.0.1] - 2026-11-25
+
+### 修复
+
+- **CI 全线飘红**：`ruff` 静态检查拦下了全部 4 个 matrix 任务，测试因此从未执行。
+  修正 4 处违规：`typing.Callable/Iterable` → `collections.abc`、多余的
+  `.encode("utf-8")`、多余的 `open(..., "r")` 模式参数、`gui.py` 导入排序
+- **CI 拆分 `lint` 与 `test` 两个 job**：lint 失败不再连带跳过测试，
+  并改用 `--output-format=github` 把违规直接标注到文件行上
+- **固定 `ruff==0.17.6`**：ruff 每版都会调整规则集，浮动版本会让 CI 无故变红
+
 ## [1.0.0] - 2026-11-25
 
 首个可发布版本。

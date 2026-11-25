@@ -10,9 +10,9 @@ import os
 import re
 import subprocess
 import time
+from collections.abc import Callable, Iterable
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Callable, Iterable
 from urllib import error as urlerror
 from urllib import request as urlrequest
 
@@ -352,7 +352,7 @@ def commit_all(root: Path, message: str, log: Callable[[str], None]) -> bool:
 def _auth_args(token: str) -> list[str]:
     """一次性认证头；Token 只出现在本次命令行参数里，不落盘。"""
     pair = base64.b64encode(
-        f"x-access-token:{token.strip()}".encode("utf-8")).decode("ascii")
+        f"x-access-token:{token.strip()}".encode()).decode("ascii")
     return ["-c", "credential.helper=",
             "-c", f"http.extraHeader=Authorization: Basic {pair}"]
 

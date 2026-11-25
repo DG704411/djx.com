@@ -34,7 +34,7 @@ Changelog = "https://github.com/DG704411/gitpusher/blob/main/CHANGELOG.md"
 gitpusher = "gitpusher.cli:main"
 
 [project.optional-dependencies]
-dev = ["pytest>=8", "ruff>=0.6"]
+dev = ["pytest>=8", "ruff==0.17.6"]
 
 [tool.setuptools]
 package-dir = { "" = "src" }

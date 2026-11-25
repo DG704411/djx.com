@@ -8,11 +8,10 @@ from __future__ import annotations
 import queue
 import threading
 import time
+import tkinter as tk
 import traceback
 import webbrowser
 from pathlib import Path
-
-import tkinter as tk
 from tkinter import filedialog, messagebox, scrolledtext, ttk
 
 from . import core
